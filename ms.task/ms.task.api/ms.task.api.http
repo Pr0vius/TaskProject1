@@ -1,0 +1,6 @@
+@ms.task.api_HostAddress = http://localhost:5029
+
+GET {{ms.task.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

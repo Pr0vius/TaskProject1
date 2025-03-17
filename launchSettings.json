@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "ms.auth.api": "StartDebugging",
+        "ms.task.api": "StartDebugging",
+        "ms.user.api": "StartDebugging"
+      }
+    }
+  }
+}

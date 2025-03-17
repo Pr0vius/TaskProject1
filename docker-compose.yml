@@ -1,0 +1,40 @@
+services:
+    db.users.sql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+    db.auth.sql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+    db.task.sql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+
+    
+    ms.auth.api:
+        image: ${DOCKER_REGISTRY-}msauthapi
+        build:
+            context: .
+            dockerfile: ms.auth/ms.auth.api/Dockerfile
+
+    ms.task.api:
+        image: ${DOCKER_REGISTRY-}mstaskapi
+        build:
+            context: .
+            dockerfile: ms.task/ms.task.api/Dockerfile
+
+    ms.user.api:
+        image: ${DOCKER_REGISTRY-}msuserapi
+        build:
+            context: .
+            dockerfile: ms.user/ms.user.api/Dockerfile
+
+    ms.rabbitmq:
+        image: rabbitmq:3-management
+
+    ms.apigateway.api:
+        image: ${DOCKER_REGISTRY-}msapigatewayapi
+        build:
+            context: .
+            dockerfile: ms.communication/ms.apigateway/ms.apigateway.api/Dockerfile
+
+volumes:
+    task_sqlserver_users:
+    task_sqlserver_auth:
+    task_sqlserver_task:

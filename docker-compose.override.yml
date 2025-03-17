@@ -1,0 +1,84 @@
+services:
+    db.auth.sql:
+        container_name: db.auth.sql
+        environment:
+            MSSQL_SA_PASSWORD: "gmJacHPs9QbU"
+            ACCEPT_EULA: "Y"
+        ports:
+            - "1433:1433"
+        volumes:
+            - "task_sqlserver_auth:/var/opt/mssql"
+
+    db.users.sql:
+        container_name: db.users.sql
+        environment:
+            MSSQL_SA_PASSWORD: "gmJacHPs9QbU"
+            ACCEPT_EULA: "Y"
+        ports:
+            - "1434:1433"
+        volumes:
+            - "task_sqlserver_users:/var/opt/mssql"
+
+    db.task.sql:
+        container_name: db.task.sql
+        environment:
+            MSSQL_SA_PASSWORD: "gmJacHPs9QbU"
+            ACCEPT_EULA: "Y"
+        ports:
+            - "1435:1433"
+        volumes:
+            - "task_sqlserver_task:/var/opt/mssql"
+
+
+    ms.apigateway.api:
+        container_name: ms.apigateway.api
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTP_PORTS=8000
+            - ASPNETCORE_HTTPS_PORTS=8001
+        ports:
+            - "8000:8000"
+            - "8001:8001"
+        volumes:
+            - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+            - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+    ms.auth.api:
+        container_name: ms.auth.api
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTP_PORTS=8010
+            - "Communication:EventBus:HostName=ms.rabbitmq"
+        ports:
+            - "8010:8010"
+        depends_on:
+            - db.auth.sql
+            - ms.user.api 
+
+
+    ms.user.api:
+        container_name: ms.user.api
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTP_PORTS=8020
+        ports:
+            - "8020:8020"
+        depends_on:
+            - db.users.sql
+
+    ms.task.api:
+        container_name: ms.task.api
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTP_PORTS=8030
+        ports:
+            - "8030:8030"
+        depends_on:
+            - db.task.sql
+
+    ms.rabbitmq:
+        container_name: ms.rabbitmq
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+    
